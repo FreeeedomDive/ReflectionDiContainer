@@ -1,22 +1,46 @@
 ﻿using System.Text;
-using ReflectionDiContainer.TypeScanner;
+using ReflectionDiContainer.Models;
 
-namespace ReflectionDiContainer.DependenciesBuilder;
+namespace ReflectionDiContainer.Container;
 
 public class DependenciesBuilder : IDependenciesBuilder
 {
     public DependenciesBuilder(ITypeScanner typeScanner)
     {
         this.typeScanner = typeScanner;
-        Roots = typeScanner.Scan();
-        Dependencies = new Dictionary<Type, Type[]>();
-        Implementations = new Dictionary<Type, Type>();
+        dependencyTree = new DependencyTree
+        {
+            Roots = typeScanner.Scan(),
+            Dependencies = new Dictionary<Type, Type[]>(),
+            Implementations = new Dictionary<Type, Type>(),
+            Instances = new Dictionary<Type, object>(),
+            Skip = new HashSet<Type>(),
+        };
     }
 
-    public void BuildDependencies()
+    public DependenciesBuilder Skip<T>()
+    {
+        dependencyTree.Skip.Add(typeof(T));
+        return this;
+    }
+
+    public DependenciesBuilder Register<TInterface, TImplementation>()
+    {
+        dependencyTree.Implementations[typeof(TInterface)] = typeof(TImplementation);
+        return this;
+    }
+
+    public DependenciesBuilder Register<TInterface>(object instance)
+    {
+        dependencyTree.Instances[typeof(TInterface)] = instance;
+        return this;
+    }
+
+    public DependencyTree Build()
     {
         var types = typeScanner.Assemblies.SelectMany(x => x.GetTypes()).ToArray();
-        ProcessTypes(types, Roots, new Stack<Type>());
+        ProcessTypes(types, dependencyTree.Roots, new Stack<Type>());
+        return dependencyTree;
     }
 
     private void ProcessTypes(Type[] assembliesTypes, IEnumerable<Type> types, Stack<Type> chain)
@@ -24,7 +48,13 @@ public class DependenciesBuilder : IDependenciesBuilder
         var depth = chain.Count;
         foreach (var type in types)
         {
-            if (Implementations.TryGetValue(type, out var configuredType))
+            if (dependencyTree.Skip.Contains(type))
+            {
+                Console.WriteLine(SkipTypeToString(type, depth));
+                continue;
+            }
+
+            if (dependencyTree.Implementations.TryGetValue(type, out var configuredType))
             {
                 if (chain.Contains(type))
                 {
@@ -36,8 +66,14 @@ public class DependenciesBuilder : IDependenciesBuilder
                 continue;
             }
 
+            if (dependencyTree.Instances.TryGetValue(type, out _))
+            {
+                Console.WriteLine(InstanceToString(type, depth));
+                continue;
+            }
+
             var (interfaceType, implementationType) = CreateImplementation(assembliesTypes, type, depth);
-            Implementations[interfaceType] = implementationType;
+            dependencyTree.Implementations[interfaceType] = implementationType;
 
             var constructors = implementationType.GetConstructors();
             if (constructors.Length > 1)
@@ -47,7 +83,7 @@ public class DependenciesBuilder : IDependenciesBuilder
 
             var constructor = constructors.First();
             var parameters = constructor.GetParameters().Select(p => p.ParameterType).ToArray();
-            Dependencies[implementationType] = parameters;
+            dependencyTree.Dependencies[implementationType] = parameters;
             chain.Push(type);
             ProcessTypes(assembliesTypes, parameters, chain);
             chain.Pop();
@@ -93,7 +129,7 @@ public class DependenciesBuilder : IDependenciesBuilder
 
     private static string TypeToString(Type interfaceType, Type implementationType, int depth, bool isCreated = true)
     {
-        var sb = new StringBuilder(string.Join("", Enumerable.Repeat("  ", depth)));
+        var sb = CreateStringBuilderWithShift(depth);
         sb.Append(isCreated ? "Created " : "Reused ");
         if (!interfaceType.IsGenericType)
         {
@@ -109,9 +145,25 @@ public class DependenciesBuilder : IDependenciesBuilder
         return sb.ToString();
     }
 
-    public IEnumerable<Type> Roots { get; }
-    public IDictionary<Type, Type[]> Dependencies { get; }
-    public IDictionary<Type, Type> Implementations { get; }
+    private static string InstanceToString(Type type, int depth)
+    {
+        return CreateStringBuilderWithShift(depth)
+            .Append($"Reused {type.Name} - instance")
+            .ToString();
+    }
+
+    private static string SkipTypeToString(Type type, int depth)
+    {
+        return CreateStringBuilderWithShift(depth)
+            .Append($"Skipped {type.Name}")
+            .ToString();
+    }
+
+    private static StringBuilder CreateStringBuilderWithShift(int count)
+    {
+        return new StringBuilder(string.Join("", Enumerable.Repeat("  ", count)));
+    }
 
     private readonly ITypeScanner typeScanner;
+    private readonly DependencyTree dependencyTree;
 }

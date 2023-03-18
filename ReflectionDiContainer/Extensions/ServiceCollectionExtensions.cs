@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ReflectionDiContainer.Container;
+using ReflectionDiContainer.Models;
 
 namespace ReflectionDiContainer.Extensions;
 
@@ -9,46 +10,45 @@ public static class ServiceCollectionExtensions
     {
         var typeScanner = new TypeScanner();
         var dependenciesBuilder = new DependenciesBuilder(typeScanner);
-        dependenciesBuilder.BuildDependencies();
-        foreach (var rootType in dependenciesBuilder.Roots)
+        var tree = dependenciesBuilder.Build();
+        foreach (var rootType in tree.Roots)
         {
-            RegisterType(
-                services,
-                rootType,
-                dependenciesBuilder.Dependencies,
-                dependenciesBuilder.Implementations,
-                new HashSet<Type>()
-            );
+            RegisterType(services, rootType, tree, new HashSet<Type>());
         }
     }
 
     private static void RegisterType(
         IServiceCollection services,
         Type serviceType,
-        IDictionary<Type, Type[]> dependencies,
-        IDictionary<Type, Type> implementations,
+        DependencyTree tree,
         ISet<Type> processing
     )
     {
-        if (processing.Contains(serviceType))
+        if (tree.Skip.Contains(serviceType) || processing.Contains(serviceType))
         {
             return;
         }
 
         processing.Add(serviceType);
 
-        if (!implementations.TryGetValue(serviceType, out var implementationType))
+        if (tree.Implementations.TryGetValue(serviceType, out var implementationType))
+        {
+            var dependenciesTypes = tree.Dependencies[implementationType];
+            foreach (var dependencyType in dependenciesTypes)
+            {
+                RegisterType(services, dependencyType, tree, processing);
+            }
+
+            services.AddTransient(serviceType, implementationType);
+        }
+        else if (tree.Instances.TryGetValue(serviceType, out var instance))
+        {
+            services.AddSingleton(serviceType, instance);
+        }
+        else
         {
             throw new InvalidOperationException($"No implementation found for type {serviceType.FullName}.");
         }
-
-        var dependenciesTypes = dependencies[implementationType];
-        foreach (var dependencyType in dependenciesTypes)
-        {
-            RegisterType(services, dependencyType, dependencies, implementations, processing);
-        }
-
-        services.AddTransient(serviceType, implementationType);
 
         processing.Remove(serviceType);
     }

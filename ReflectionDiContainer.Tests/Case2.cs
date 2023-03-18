@@ -4,6 +4,22 @@ namespace ReflectionDiContainer.Tests;
 
 public class Case2
 {
+    public interface ISingleton
+    {
+    }
+
+    public class Singleton : ISingleton
+    {
+    }
+    
+    public interface ISkipable
+    {
+    }
+
+    public class Skipable : ISkipable
+    {
+    }
+    
     public interface IGenericType<T1, T2>
     {
     }
@@ -18,7 +34,7 @@ public class Case2
 
     public class Type8 : IType8
     {
-        public Type8(IGenericType<int, string> genericType)
+        public Type8(IGenericType<int, string> genericType, ISingleton singleton)
         {
         }
     }
@@ -29,7 +45,7 @@ public class Case2
 
     public class Type7 : IType7
     {
-        public Type7(IType8 type8)
+        public Type7(IType8 type8, ISkipable skipable)
         {
         }
     }
@@ -40,7 +56,7 @@ public class Case2
 
     public class Type6 : IType6
     {
-        public Type6(IGenericType<string, int> genericType)
+        public Type6(IGenericType<string, int> genericType, ISingleton singleton)
         {
         }
     }
@@ -62,7 +78,7 @@ public class Case2
 
     public class Type4 : IType4
     {
-        public Type4(IType6 type6, IType7 type7)
+        public Type4(IType6 type6, IType7 type7, ISingleton singleton)
         {
         }
     }
@@ -92,7 +108,7 @@ public class Case2
 
     public class Type1 : IType1
     {
-        public Type1(IType2 type2, IType3 type3, IType4 type4)
+        public Type1(IType2 type2, IType3 type3, IType4 type4, ISingleton singleton)
         {
         }
     }

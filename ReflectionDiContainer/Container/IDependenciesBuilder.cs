@@ -1,9 +1,11 @@
-﻿namespace ReflectionDiContainer.DependenciesBuilder;
+﻿using ReflectionDiContainer.Models;
+
+namespace ReflectionDiContainer.Container;
 
 public interface IDependenciesBuilder
 {
-    IEnumerable<Type> Roots { get; }
-    IDictionary<Type, Type[]> Dependencies { get; }
-    IDictionary<Type, Type> Implementations { get; }
-    void BuildDependencies();
+    DependenciesBuilder Skip<T>();
+    DependenciesBuilder Register<TInterface, TImplementation>();
+    DependenciesBuilder Register<TInterface>(object instance);
+    DependencyTree Build();
 }

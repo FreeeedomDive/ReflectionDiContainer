@@ -10,7 +10,10 @@ public class DependenciesBuilderTests
     {
         var typeScanner = new TypeScanner();
         var dependencyBuilder = new DependenciesBuilder(typeScanner);
-        var action = () => dependencyBuilder.BuildDependencies();
+        var action = () => dependencyBuilder
+            .Skip<Case2.ISkipable>()
+            .Register<Case2.ISingleton>(new Case2.Singleton())
+            .Build();
         action.Should().NotThrow();
     }
 }
