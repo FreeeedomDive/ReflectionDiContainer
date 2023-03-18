@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using ReflectionDiContainer.Extensions;
 
-namespace ReflectionDiContainer.TypeScanner;
+namespace ReflectionDiContainer.Container;
 
 public class TypeScanner : ITypeScanner
 {

@@ -7,7 +7,7 @@ internal static class TypeExtensions
 {
     public static bool IsController(this Type type)
     {
-        return typeof(ControllerBase).IsAssignableFrom(type);
+        return typeof(ControllerBase).IsAssignableFrom(type) && type != typeof(ControllerBase);
     }
 
     public static bool IsEntryPoint(this Type type)

@@ -4,6 +4,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReflectionDiContainer", "Re
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReflectionDiContainer.Tests", "ReflectionDiContainer.Tests\ReflectionDiContainer.Tests.csproj", "{5D827996-EB90-40C4-96A3-E9FFAE39BAB2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F97B0AAB-A720-4505-B89C-E5A4FC5335F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReflectionDiContainer.Tests.Api", "ReflectionDiContainer.Tests.Api\ReflectionDiContainer.Tests.Api.csproj", "{5EC4252A-C5E0-47E4-9563-39D52A56BF3D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +22,13 @@ Global
 		{5D827996-EB90-40C4-96A3-E9FFAE39BAB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D827996-EB90-40C4-96A3-E9FFAE39BAB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D827996-EB90-40C4-96A3-E9FFAE39BAB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EC4252A-C5E0-47E4-9563-39D52A56BF3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EC4252A-C5E0-47E4-9563-39D52A56BF3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EC4252A-C5E0-47E4-9563-39D52A56BF3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EC4252A-C5E0-47E4-9563-39D52A56BF3D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5D827996-EB90-40C4-96A3-E9FFAE39BAB2} = {F97B0AAB-A720-4505-B89C-E5A4FC5335F1}
+		{5EC4252A-C5E0-47E4-9563-39D52A56BF3D} = {F97B0AAB-A720-4505-B89C-E5A4FC5335F1}
 	EndGlobalSection
 EndGlobal

@@ -1,18 +1,14 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using ReflectionDiContainer.Container;
 
 namespace ReflectionDiContainer.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static void RegisterDependencies(
-        this IServiceCollection services,
-        IEnumerable<Type> rootTypes,
-        IDictionary<Type, Type[]> dependencies,
-        IDictionary<Type, Type> implementations
-    )
+    public static void RegisterDependencies(this IServiceCollection services)
     {
-        var typeScanner = new TypeScanner.TypeScanner();
-        var dependenciesBuilder = new DependenciesBuilder.DependenciesBuilder(typeScanner);
+        var typeScanner = new TypeScanner();
+        var dependenciesBuilder = new DependenciesBuilder(typeScanner);
         dependenciesBuilder.BuildDependencies();
         foreach (var rootType in dependenciesBuilder.Roots)
         {

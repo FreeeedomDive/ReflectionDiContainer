@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace ReflectionDiContainer.TypeScanner;
+namespace ReflectionDiContainer.Container;
 
 public interface ITypeScanner
 {
