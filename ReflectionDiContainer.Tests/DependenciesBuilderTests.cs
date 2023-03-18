@@ -8,7 +8,8 @@ public class DependenciesBuilderTests
     public void Case()
     {
         var typeScanner = new TypeScanner.TypeScanner();
-        var action = () => new DependenciesBuilder.DependenciesBuilder(typeScanner);
+        var dependencyBuilder = new DependenciesBuilder.DependenciesBuilder(typeScanner);
+        var action = () => dependencyBuilder.BuildDependencies();
         action.Should().NotThrow();
     }
 }

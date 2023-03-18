@@ -13,6 +13,7 @@ public static class ServiceCollectionExtensions
     {
         var typeScanner = new TypeScanner.TypeScanner();
         var dependenciesBuilder = new DependenciesBuilder.DependenciesBuilder(typeScanner);
+        dependenciesBuilder.BuildDependencies();
         foreach (var rootType in dependenciesBuilder.Roots)
         {
             RegisterType(

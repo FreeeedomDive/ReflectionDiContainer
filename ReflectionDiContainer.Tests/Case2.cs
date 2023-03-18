@@ -4,13 +4,21 @@ namespace ReflectionDiContainer.Tests;
 
 public class Case2
 {
+    public interface IGenericType<T1, T2>
+    {
+    }
+
+    public class GenericType<T1, T2> : IGenericType<T1, T2>
+    {
+    }
+    
     public interface IType8
     {
     }
 
     public class Type8 : IType8
     {
-        public Type8(IType4 type4)
+        public Type8(IGenericType<int, string> genericType)
         {
         }
     }
@@ -32,6 +40,9 @@ public class Case2
 
     public class Type6 : IType6
     {
+        public Type6(IGenericType<string, int> genericType)
+        {
+        }
     }
 
     public interface IType5
@@ -40,6 +51,9 @@ public class Case2
 
     public class Type5 : IType5
     {
+        public Type5(IGenericType<int, int> genericType)
+        {
+        }
     }
 
     public interface IType4
@@ -67,7 +81,7 @@ public class Case2
 
     public class Type2 : IType2
     {
-        public Type2(IType5 type5, IType6 type6)
+        public Type2(IType5 type5, IType6 type6, IGenericType<int, int> genericType)
         {
         }
     }
