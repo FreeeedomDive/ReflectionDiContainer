@@ -1,9 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+        <PackageId>Xdd.ReflectionDiContainer</PackageId>
+        <Title>ReflectionDiContainer</Title>
+        <Authors>hortari</Authors>
+        <Version>$(VersionSuffix)</Version>
+        <Description>Dependencies tree builder</Description>
     </PropertyGroup>
 
     <ItemGroup>
